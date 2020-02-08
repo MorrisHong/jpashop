@@ -25,7 +25,7 @@ public class OrderRepository {
         return em.find(Order.class, id);
     }
 
-    public List<Order> findAll(OrderSearch orderSearch){
+    public List<Order> findAll(OrderSearch orderSearch) {
         String jpql = "select o from Order as o inner join Member as m";
 
 
@@ -43,13 +43,13 @@ public class OrderRepository {
         List<Predicate> criteria = new ArrayList<>();
 
         //주문 상태 검색
-        if(orderSearch.getOrderStatus() != null) {
+        if (orderSearch.getOrderStatus() != null) {
             Predicate status = cb.equal(o.get("status"), orderSearch.getOrderStatus());
             criteria.add(status);
         }
 
         //회원 이름 검색
-        if(StringUtils.hasText(orderSearch.getMemberName())) {
+        if (StringUtils.hasText(orderSearch.getMemberName())) {
             Predicate name = cb.like(m.get("name"), "%" + orderSearch.getMemberName() + "%");
             criteria.add(name);
         }
@@ -58,5 +58,13 @@ public class OrderRepository {
         TypedQuery<Order> query = em.createQuery(cq).setMaxResults(1000);
 
         return query.getResultList();
+    }
+
+    public List<Order> findAllWithMemberDelivery() {
+        return em.createQuery(
+                "select o from Order as o" +
+                        " join fetch o.member as m" +
+                        " join fetch o.delivery as d", Order.class
+        ).getResultList();
     }
 }
