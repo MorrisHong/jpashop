@@ -6,7 +6,6 @@ import jpabook.jpashop.domain.OrderItem;
 import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
-import jpabook.jpashop.service.OrderService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,6 +42,13 @@ public class OrderApiController {
                 .collect(Collectors.toList());
         return collect;
     }
+
+    @GetMapping("/api/v3/orders")
+    public List<OrderDto> ordersV3() {
+        List<Order> orders = orderRepository.findAllWithItem();
+        return orders.stream().map(OrderDto::new).collect(Collectors.toList());
+    }
+
 
     @Getter
     static class OrderDto {
